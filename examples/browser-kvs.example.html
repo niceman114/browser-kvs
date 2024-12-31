@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserKvs Test</title>
+    <style>
+        #output {
+            font-family: consolas, monospace;
+            white-space: pre-wrap;
+            border: 1px solid #6272a4;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: #282a36;
+            color: #f8f8f2;
+            border-radius: 5px;
+        }
+        #output div {
+            margin-bottom: 5px;
+        }
+        #output .log-block {
+            display: flex;
+            flex-direction: column;
+            margin: 10px 0 20px 0;
+            padding: 10px 10px 5px 10px;
+            border: 1px solid #a4ff96;
+            border-radius: 5px;
+        }
+        #output .string {
+            color: #dcc378;
+        }
+        #output .number {
+            color: #bd93f9;
+        }
+        #output .boolean {
+            color: #ff79c6;
+        }
+        #output .object {
+            color: #8be9fd;
+        }
+        #output .function {
+            color: #5088e6;
+        }
+        .area {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+        .hide {
+            display: none;
+        }
+        button#run {
+            display: block;
+            width: 100%;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        button#run:hover {
+            background-color: #df0101;
+        }
+        button#run:active {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transform: scale(0.95);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/browser-kvs/browser-kvs.min.js"></script>
+</head>
+<body>
+<h1>BrowserKvs Test</h1>
+<h2>Key-Value</h2>
+<div class="area">
+    <label>Key(string): <input type="text" id="inputKey" placeholder="Input string for key" value="browser-kvs-test" /></label>
+    <label>
+        ValueType:
+        <select id="valueType" onchange="displayValueArea(this.value)">
+            <option value="string" selected>string</option>
+            <option value="number">number</option>
+            <option value="boolean">boolean</option>
+            <option value="object">object</option>
+        </select>
+    </label>
+    <label id="stringValueLabel" class="hide">
+        Value:
+        <input type="text" id="stringValue" placeholder="Input string value" value="" />
+    </label>
+    <label id="numberValueLabel" class="hide">
+        Value:
+        <input type="text" id="numberValue" placeholder="Input number value" value="" />
+    </label>
+    <label id="booleanValueLabel" class="hide">
+        Value:
+        <label><input type="radio" name="booleanValue" value="true" checked />true</label>
+        <label><input type="radio" name="booleanValue" value="false" />false</label>
+    </label>
+    <label id="objectValueLabel" class="hide">
+        Value: <a href="#" onclick="setObjectValueExample()">Set Example</a>
+        <textarea name="objectValue" style="width:100%; height:100px" placeholder="Input JSON string for object value"></textarea>
+    </label>
+</div>
+
+<h2>Store type</h2>
+<div class="area">
+    <label><input type="radio" name="storeType" value="InMemoryStore" checked />InMemoryStore</label>
+    <label><input type="radio" name="storeType" value="LocalStorageStore" />LocalStorageStore</label>
+    <label><input type="radio" name="storeType" value="SessionStorageStore" />SessionStorageStore</label>
+</div>
+
+<h2>Use default callbacks</h2>
+<div class="area">
+    <label><input type="checkbox" id="defaultOnSaved" checked />onSaved</label>
+    <label><input type="checkbox" id="defaultOnLoaded" checked />onLoaded</label>
+    <label><input type="checkbox" id="defaultOnRemoved" checked />onRemoved</label>
+    <label><input type="checkbox" id="defaultOnCleared" checked />onCleared</label>
+</div>
+
+<h2>Use explicit callbacks</h2>
+<div class="area">
+    <label><input type="checkbox" id="explicitOnSaved" checked />onSaved</label>
+    <label><input type="checkbox" id="explicitOnLoaded" checked />onLoaded</label>
+    <label><input type="checkbox" id="explicitOnRemoved" checked />onRemoved</label>
+    <label><input type="checkbox" id="explicitOnCleared" checked />onCleared</label>
+</div>
+
+<h2>Run actions</h2>
+<div class="area">
+    <label><input type="checkbox" id="runSave" checked />Run Save</label>
+    <label><input type="checkbox" id="runLoad" checked />Run Load</label>
+    <label><input type="checkbox" id="runRemove" checked />Run Remove</label>
+    <label><input type="checkbox" id="runClear" checked />Run Clear</label>
+</div>
+<button id="run">Run</button>
+
+<div id="output">Click the "Run" button above!</div>
+
+<script>
+    const objectValueExample = {"str":"ok", "bool": true, "num":123, "obj": null};
+
+    function displayValueArea(valueType)
+    {
+        document.querySelector("#stringValueLabel").style.display = "";
+        document.querySelector("#numberValueLabel").style.display = "";
+        document.querySelector("#booleanValueLabel").style.display = "";
+        document.querySelector("#objectValueLabel").style.display = "";
+
+        switch (valueType) {
+            case "number":
+                document.querySelector("#numberValueLabel").style.display = "inline-block";
+                break;
+            case "boolean":
+                document.querySelector("#booleanValueLabel").style.display = "inline-block";
+                break;
+            case "object":
+                document.querySelector("#objectValueLabel").style.display = "inline-block";
+                break;
+            case "string": // falls through
+            default:
+                document.querySelector("#stringValueLabel").style.display = "inline-block";
+        }
+    }
+
+    document.querySelector("#valueType").onchange();
+
+    function setObjectValueExample()
+    {
+        document.querySelector("textarea[name=objectValue]").value = JSON.stringify(objectValueExample, null, 2);
+    }
+
+    function formatLogArgs({key, value, callback, object, delimeter = ", "}) {
+        const params = [];
+
+        if (key !== undefined) {
+            params.push(`key: ${typeof key} = ${key}`);
+        }
+
+        if (value !== undefined) {
+            if (typeof value === "object") {
+                params.push(`value: ${typeof value} = ${JSON.stringify(value)}`);
+            } else {
+                params.push(`value: ${typeof value} = ${value}`);
+            }
+        }
+
+        if (callback) {
+            params.push(`callback: ${typeof callback} = ${callback}`);
+        }
+
+        if (object) {
+            Object.entries(object)
+                .forEach(([key, value]) => params.push(`${key}: ${typeof value} = ${value}`));
+        }
+
+        return params.join(delimeter);
+    }
+
+    const originalLog = console.log;
+    const output = document.querySelector("#output");
+    const logBlocks = [];
+
+    console.log = function(...args) {
+        const logBlock = document.createElement("div");
+        logBlock.className = "log-block";
+
+        const logLine = document.createElement("div");
+        const logArgs = [];
+
+        originalLog.apply(console, args);
+        args.forEach((arg) => {
+            const logArg = document.createElement("span");
+            if (typeof arg === "object") {
+                logArg.textContent = JSON.stringify(arg, (key, value) => {
+                    if (typeof value === "function") {
+                        return value.toString();
+                    }
+                    return value;
+                }, 2);
+            } else if (typeof arg === "undefined") {
+                logArg.textContent = "undefined";
+            } else if (typeof arg === "string") {
+                logArg.textContent = `"${arg}"`;
+            } else {
+                logArg.textContent = arg;
+            }
+            logArg.className = typeof arg;
+
+            logArgs.push(logArg, document.createTextNode(", "));
+        });
+
+        logArgs.length--; // Remove last TextNode(", ")
+        logLine.append(...logArgs);
+        logBlock.appendChild(logLine);
+
+        logBlocks.push(logBlock);
+    };
+
+    document.querySelector("#run").addEventListener("click", () => {
+        logBlocks.length = 0;
+
+        const selectedStoreType = document.querySelector("input[name=storeType]:checked").value;
+
+        const key = document.querySelector("#inputKey").value;
+        if (key.length < 1) {
+            alert("Key cannot be empty string!");
+            document.querySelector("#inputKey").focus();
+            return;
+        }
+
+        const valueType = document.querySelector("#valueType").value;
+
+        let value;
+        switch (valueType) {
+            case "number":
+                const numberValue = document.querySelector("#numberValue").value;
+                value = Number(numberValue);
+                break;
+            case "boolean":
+                const booleanValue = document.querySelector("input[name=booleanValue]:checked").value;
+                value = JSON.parse(booleanValue);
+                break;
+            case "object":
+                const objectValue = document.querySelector("textarea[name=objectValue]").value;
+                value = JSON.parse(objectValue);
+                break;
+            case "string": // falls through
+            default:
+                value = document.querySelector("#stringValue").value;
+        }
+
+        const useDefaultOnSaved = document.querySelector("#defaultOnSaved").checked;
+        const useDefaultOnLoaded = document.querySelector("#defaultOnLoaded").checked;
+        const useDefaultOnRemoved = document.querySelector("#defaultOnRemoved").checked;
+        const useDefaultOnCleared = document.querySelector("#defaultOnCleared").checked;
+
+        const useExplicitOnSaved = document.querySelector("#explicitOnSaved").checked;
+        const useExplicitOnLoaded = document.querySelector("#explicitOnLoaded").checked;
+        const useExplicitOnRemoved = document.querySelector("#explicitOnRemoved").checked;
+        const useExplicitOnCleared = document.querySelector("#explicitOnCleared").checked;
+
+        const runSave = document.querySelector("#runSave").checked;
+        const runLoad = document.querySelector("#runLoad").checked;
+        const runRemove = document.querySelector("#runRemove").checked;
+        const runClear = document.querySelector("#runClear").checked;
+
+        const defaultCallbacks = {};
+        if (useDefaultOnSaved) {
+            defaultCallbacks.onSaved = (success) => console.log("[CallbackExecuted] DefaultOnSaved", success);
+        }
+        if (useDefaultOnLoaded) {
+            defaultCallbacks.onLoaded = (value) => console.log("[CallbackExecuted] DefaultOnLoaded", value);
+        }
+        if (useDefaultOnRemoved) {
+            defaultCallbacks.onRemoved = (value) => console.log("[CallbackExecuted] DefaultOnRemoved", value);
+        }
+        if (useDefaultOnCleared) {
+            defaultCallbacks.onCleared = () => console.log("[CallbackExecuted] DefaultOnCleared");
+        }
+
+        const explicitCallbacks = {};
+        if (useExplicitOnSaved) {
+            explicitCallbacks.onSaved = (success) => console.log("[CallbackExecuted] ExplicitOnSaved", success);
+        }
+        if (useExplicitOnLoaded) {
+            explicitCallbacks.onLoaded = (value) => console.log("[CallbackExecuted] ExplicitOnLoaded", value);
+        }
+        if (useExplicitOnRemoved) {
+            explicitCallbacks.onRemoved = (value) => console.log("[CallbackExecuted] ExplicitOnRemoved", value);
+        }
+        if (useExplicitOnCleared) {
+            explicitCallbacks.onCleared = () => console.log("[CallbackExecuted] ExplicitOnCleared");
+        }
+
+        let store;
+        switch (selectedStoreType) {
+            case "LocalStorageStore":
+                store = BrowserKvs.createLocalStorageStore(defaultCallbacks);
+                break;
+            case "SessionStorageStore":
+                store = BrowserKvs.createSessionStorageStore(defaultCallbacks);
+                break;
+            case "InMemoryStore": // falls through
+            default:
+                store = BrowserKvs.createInMemoryStore(defaultCallbacks);
+        }
+
+        if (Object.entries(defaultCallbacks).length > 0) {
+            console.log(`[StoreCreated] BrowserKvs.create${selectedStoreType}(defaultCallbacks: {\n\t${formatLogArgs({object: defaultCallbacks, delimeter: ",\n\t"})}\n)}`);
+        } else {
+            console.log(`[StoreCreated] BrowserKvs.create${selectedStoreType}({})`);
+        }
+
+        if (runSave) {
+            console.log(`[Run] save(\n\t${formatLogArgs({key, value, callback: explicitCallbacks.onSaved, delimeter: ",\n\t"})}\n)`);
+            const returnValue = store.save(key, value, explicitCallbacks.onSaved);
+            console.log("[Returned] save", returnValue);
+        }
+
+        if (runLoad) {
+            console.log(`[Run] load(\n\t${formatLogArgs({key, callback: explicitCallbacks.onLoaded, delimeter: ",\n\t"})}\n)`);
+            const returnValue = store.load(key, explicitCallbacks.onLoaded);
+            console.log("[Returned] load", returnValue);
+        }
+
+        if (runRemove) {
+            console.log(`[Run] remove(\n\t${formatLogArgs({key, callback: explicitCallbacks.onRemoved, delimeter: ",\n\t"})}\n)`);
+            const returnValue = store.remove(key, explicitCallbacks.onRemoved);
+            console.log("[Returned] remove", returnValue);
+        }
+
+        if (runClear) {
+            console.log(`[Run] clear(${formatLogArgs({callback: explicitCallbacks.onCleared})})`);
+            store.clear(explicitCallbacks.onCleared);
+        }
+
+        output.innerHTML = "";
+        output.append(...logBlocks);
+    });
+</script>
+</body>
+</html>

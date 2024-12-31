@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"],
+      "$/*": ["./tests/*"]
+    },
+    "resolveJsonModule": true,
+    "strict": true
+  }
+}
