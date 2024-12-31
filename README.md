@@ -1,5 +1,9 @@
 # Browser KVS
 
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fniceman114%2Fbrowser-kvs&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+[![NPM Version](https://img.shields.io/npm/v/browser-kvs.svg?logo=npm)](https://www.npmjs.com/package/browser-kvs)
+[![NPM Downloads](https://img.shields.io/npm/dt/browser-kvs?logo=npm)](https://www.npmjs.com/package/browser-kvs)
+
 **Browser KVS** is a versatile key-value store library designed to provide consistent usage across various storage options supported by modern browsers, such as `localStorage` and `sessionStorage`.
 
 ## Features
