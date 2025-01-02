@@ -14,3 +14,4 @@ yarn-error.log*
 
 package-lock.json
 browser-kvs-*.tgz
+/test-reports
