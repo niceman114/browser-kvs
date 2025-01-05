@@ -1,0 +1,8 @@
+{
+    "commitLimit": false,
+    "hideCredit": true,
+    "hideEmptyReleases": true,
+    "ignoreCommitPattern": ":bookmark: v|WIP",
+    "sortCommits": "date-desc",
+    "template": "compact"
+}
