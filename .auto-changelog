@@ -1,8 +1,10 @@
 {
-    "commitLimit": false,
-    "hideCredit": true,
-    "hideEmptyReleases": true,
-    "ignoreCommitPattern": ":bookmark: v|WIP",
-    "sortCommits": "date-desc",
-    "template": "compact"
+  "commitLimit": false,
+  "hideCredit": true,
+  "hideEmptyReleases": false,
+  "ignoreCommitPattern": "^(?!:[a-z_]+: (docs|feat|fix|perf|refactor|test): [A-Z]).*",
+  "output": "CHANGELOG.md",
+  "sortCommits": "relevance",
+  "template": "compact",
+  "unreleased": false
 }
