@@ -30,6 +30,27 @@ npm install browser-kvs
 ```ts
 import {createLocalStorageStore} from "browser-kvs";
 
+const store = createLocalStorageStore<number>();
+
+const saved: boolean = store.save("myKey", 3.14);
+console.log(saved); // true
+
+const loaded: number|undefined = store.load("myKey");
+console.log(loaded); // 3.14
+
+const removed: number|undefined = store.remove("myKey");
+console.log(removed); // 3.14
+
+const reloaded: number|undefined = store.load("myKey");
+console.log(reloaded); // undefined
+
+store.clear();
+```
+
+##### With callbacks
+```ts
+import {createLocalStorageStore} from "browser-kvs";
+
 const store = createLocalStorageStore<number>({
   onSaved: (success) => console.log("Default:onSaved", success),
   onLoaded: (value) => console.log("Default:onLoaded", value),
