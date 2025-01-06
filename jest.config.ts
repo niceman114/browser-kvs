@@ -3,7 +3,7 @@ import {compilerOptions} from "./tsconfig.json";
 
 export default {
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
-  coverageDirectory: "coverage",
+  coverageDirectory: "./test-reports/coverage",
   coverageReporters: ["text", "lcov"],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {prefix: "<rootDir>"}),
   modulePaths: ["<rootDir>/src"],
