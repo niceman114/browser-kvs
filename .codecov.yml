@@ -1,0 +1,28 @@
+codecov:
+  max_report_age: off
+
+comment:
+  behavior: default
+  hide_project_coverage: true
+  layout: "diff, flags, files"
+  require_base: true
+  require_changes: true
+  require_head: true
+
+coverage:
+  precision: 2
+  range: 80..100
+  round: down
+  status:
+    project:
+      unit-tests:
+        base: auto
+        branches:
+          - main
+        if_ci_failed: error
+        informational: false
+        only_pulls: true
+        paths:
+          - "src"
+        target: 80%
+        threshold: 1%
