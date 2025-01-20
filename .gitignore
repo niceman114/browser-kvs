@@ -12,6 +12,5 @@ yarn-error.log*
 /.vscode
 /.idea
 
-package-lock.json
 browser-kvs-*.tgz
 /test-reports
