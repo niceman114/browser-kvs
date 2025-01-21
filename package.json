@@ -1,6 +1,6 @@
 {
   "name": "browser-kvs",
-  "version": "1.0.0-rc",
+  "version": "1.0.0",
   "description": "The key-value store library that allows consistent use of various stores supported by modern browsers.",
   "type": "module",
   "respository": {
